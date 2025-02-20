@@ -25,16 +25,21 @@ export default function Home() {
             Start your journey with us and take control of your career today.
           </p>
           <div>
-          <Button asChild className="px-6 lg:px-8 mt-6 ">
+          <Button asChild className="px-6 lg:px-8 mt-6 text-gray-50">
             <Link href={'/dashboard'} className="md:text-lg poppins-medium capitalize w-auto">
               go to dashboard
             </Link>
           </Button>
           </div>
         </motion.div>
-        <div className="hidden lg:grid place-items-center">
-            <Image src={landing} alt="landing interview" width={500} height={500} />
-        </div>
+        <motion.div
+             initial={{ opacity: 0, x: 50 }}
+             animate={{opacity: 1, x: 0}}
+             transition={{ duration: 0.5 }}
+             className="hidden lg:grid place-items-center"
+        >
+            <Image src={landing} alt="landing interview" width={500} height={400} />
+        </motion.div>
       </div>
     </main>
   );
