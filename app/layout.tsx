@@ -6,7 +6,6 @@ import Providers from "./Providers";
 export const metadata: Metadata = {
   title: "Job Finder",
   description: "Find your dream job easily!",
-  icons: "/favicon.ico"
 };
 
 export default function RootLayout({

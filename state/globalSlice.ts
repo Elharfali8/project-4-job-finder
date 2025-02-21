@@ -9,7 +9,7 @@ export interface InitialStateTypes {
 
 const initialState: InitialStateTypes = {
     isDarkMode: false,
-    isSidebarCollapsed: false,
+    isSidebarCollapsed: true,
 }
 
 const globalSlice = createSlice({

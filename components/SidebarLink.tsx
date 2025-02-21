@@ -24,7 +24,7 @@ const SidebarLink = ({
 
   return (
     <Link href={href}>
-            <div className={`cursor-pointer flex items-center rounded-lg ${isCollapsed ? 'justify-center p-2' : 'justify-start p-2'} transition-colors gap-3 lg:text-lg ${isActive ? 'bg-blue-100 hover:bg-blue-200 text-primary shadow-md' : 'hover:bg-blue-200 shadow'}` }>
+            <div className={`cursor-pointer flex items-center rounded-lg ${isCollapsed ? 'justify-center p-2' : 'justify-start p-2'} transition-colors gap-3 lg:text-lg ${isActive ? 'bg-blue-100 hover:bg-blue-200 text-primary shadow-md' : 'hover:bg-blue-200 shadow hover:text-blue-500'}` }>
                 <Icon className="w-7 h-7" />
                 <span className={`${isCollapsed ? 'hidden' : 'block'} poppins-medium capitalize `}>
                     {label}

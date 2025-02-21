@@ -11,7 +11,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
   return (
       <main className="flex w-full min-h-screen">
           <Sidebar />
-          <main className={`flex flex-col w-full h-full  ${isSidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'}`}>
+          <main className={`flex flex-col w-full h-full   ${isSidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'}`}>
               <Navbar />
               {children}
           </main>
