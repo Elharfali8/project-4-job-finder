@@ -1,12 +1,25 @@
-import * as React from "react"
+'use client'
+
+interface JobType {
+  id: number;
+  title: string;
+  company_name: string;
+  company_logo: string;
+  job_type: string;
+  category: string;
+  publication_date: string;
+  candidate_required_location: string;
+}
 
 interface SingleJobTypes {
+  id: number,
   title: string,
   company_name: string,
   company_logo: string,
   job_type: string,
   category: string,
-  publication_date: string,
+  publication_date: string,  
+  favorites: JobType[]
 }
 
 import { Button } from "@/components/ui/button"
@@ -18,19 +31,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import Image from "next/image"
-import { Star } from "lucide-react"
+import { Check, Star } from "lucide-react"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/store"
+import { addToFavorites } from "@/state/jobs/jobsSlice"
 
 export function SingleJobCard({
+  id,
   title,
   company_name,
 company_logo,
 job_type,
 category,
-publication_date,
+  publication_date,
+favorites
 }: SingleJobTypes) {
+  const dispatch = useDispatch<AppDispatch>()
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -40,6 +57,9 @@ publication_date,
       year: "numeric" 
     });
   };
+
+  const isFavorite = favorites?.find((item) => item.id === Number(id))
+
 
   return (
     <Card className="w-full shadow-lg">
@@ -65,7 +85,10 @@ publication_date,
         </p>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" className="bg-yellow-300 dark:text-gray-800 hover:bg-yellow-200">Add to favorite <Star /></Button>
+        <Button variant="outline" className="bg-yellow-300 dark:text-gray-800 hover:bg-yellow-200" onClick={() => dispatch(addToFavorites({ id }))}>
+            {isFavorite ? 'Favorite' : 'Add to favorite '}
+          {isFavorite ? <Check /> : <Star />}
+        </Button>
         <Button className="dark:text-white">Apply for job</Button>
       </CardFooter>
     </Card>
