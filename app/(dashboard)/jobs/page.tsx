@@ -10,7 +10,7 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 const JobsPage = () => {
-  const {jobs, favorites} = useSelector((store: RootState) => store.jobs)
+  const {jobs, favorites, appliedJobs} = useSelector((store: RootState) => store.jobs)
   const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
     dispatch(fetchJobs())
@@ -25,7 +25,7 @@ const JobsPage = () => {
       <Sort />
       <div className=' grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
         {jobs?.map((item) => {
-            return <SingleJobCard key={item.id } {...item} favoriteJobs={favorites} favoritePage={false} />
+            return <SingleJobCard key={item.id } {...item} favoriteJobs={favorites} favoritePage={false} appliedJobs={appliedJobs} appliedPage={false} />
           })}
       </div>
       </main>

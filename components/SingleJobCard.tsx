@@ -20,7 +20,9 @@ interface SingleJobTypes {
   category: string,
   publication_date: string,  
   favoriteJobs: JobType[] | [],
-  favoritePage: boolean
+  appliedJobs: JobType[] | []
+  favoritePage: boolean,
+  appliedPage: boolean,
 }
 
 import { Button } from "@/components/ui/button"
@@ -36,7 +38,7 @@ import Image from "next/image"
 import { Check, Star } from "lucide-react"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "@/store"
-import { addToFavorites, removeFromFavorites } from "@/state/jobs/jobsSlice"
+import { AddToApplied, addToFavorites, removeFromApplied, removeFromFavorites } from "@/state/jobs/jobsSlice"
 
 export function SingleJobCard({
   id,
@@ -47,7 +49,9 @@ job_type,
 category,
   publication_date,
   favoriteJobs = [],
-  favoritePage
+  appliedJobs = [],
+  favoritePage,
+  appliedPage
 }: SingleJobTypes) {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -61,6 +65,7 @@ category,
   };
 
   const isFavorite = favoriteJobs?.find((item) => item.id === Number(id))
+  const isApplied = appliedJobs?.find((item) => item.id === Number(id))
 
 
   return (
@@ -95,7 +100,14 @@ category,
         {isFavorite ? <Check /> : <Star />}
       </Button>
         )}
-        <Button className="dark:text-white">Apply for job</Button>
+        {appliedPage ? (
+                  <Button variant='destructive' className="text-white" onClick={() => dispatch(removeFromApplied({id}))}>remove</Button>
+        ): (
+          <Button className="dark:text-white" onClick={() => dispatch(AddToApplied({ id }))}>
+          {isApplied ? 'Applied' : 'Apply for job '}
+          {isApplied ? <Check /> : <Star />}
+          </Button>
+        )}
       </CardFooter>
     </Card>
   )

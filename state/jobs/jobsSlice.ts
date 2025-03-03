@@ -7,6 +7,7 @@ export interface InitialStateTypes {
     isLoading: boolean,
     jobs: JobType[],
     favorites: JobType[],
+    appliedJobs: JobType[],
     jobCategories: string[],
     error: null | object | string
 }
@@ -42,6 +43,7 @@ const initialState: InitialStateTypes = {
         "all-others"
     ],
     favorites: [] as JobType[],
+    appliedJobs: [] as JobType[],
     error: null,
 }
 
@@ -83,7 +85,28 @@ const jobsSlice = createSlice({
                 state.favorites = state.favorites.filter((item) => item.id !== Number(id))
                 toast.success('Job removed from favorites')
             }
-        }
+        },
+        AddToApplied: (state, { payload }) => {
+            const { id } = payload
+            const job = state.jobs.find((item) => item.id === Number(id))
+            const jobExists = state.appliedJobs.find((item) => item.id === Number(id))
+
+            if (jobExists) {
+                state.appliedJobs = state.appliedJobs.filter((item) => item.id !== Number(id))
+                toast.success('Job removed from applied')
+            } else if (job) {
+                state.appliedJobs = [...state.appliedJobs, job]
+                toast.success('Job added to applied')
+            }
+        },
+        removeFromApplied: (state, { payload }) => {
+            const { id } = payload
+            const jobExists = state.appliedJobs.find((item) => item.id === Number(id))
+            if (jobExists) {
+                state.appliedJobs = state.appliedJobs.filter((item) => item.id !== Number(id))
+                toast.success('Job removed from applied')
+            }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -103,5 +126,5 @@ const jobsSlice = createSlice({
     }
 })
 
-export const { addToFavorites, removeFromFavorites } = jobsSlice.actions
+export const { addToFavorites, removeFromFavorites, AddToApplied, removeFromApplied } = jobsSlice.actions
 export default jobsSlice.reducer
