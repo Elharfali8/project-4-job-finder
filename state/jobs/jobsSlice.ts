@@ -75,6 +75,14 @@ const jobsSlice = createSlice({
                 state.favorites = [...state.favorites, job]
                 toast.success('Job added to favorites')
             }
+        },
+        removeFromFavorites: (state, { payload }) => {
+            const { id } = payload
+            const jobExists = state.favorites.find((item) => item.id === Number(id))
+            if (jobExists) {
+                state.favorites = state.favorites.filter((item) => item.id !== Number(id))
+                toast.success('Job removed from favorites')
+            }
         }
     },
     extraReducers: (builder) => {
@@ -95,5 +103,5 @@ const jobsSlice = createSlice({
     }
 })
 
-export const { addToFavorites } = jobsSlice.actions
+export const { addToFavorites, removeFromFavorites } = jobsSlice.actions
 export default jobsSlice.reducer

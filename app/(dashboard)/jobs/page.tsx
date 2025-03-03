@@ -25,7 +25,7 @@ const JobsPage = () => {
       <Sort />
       <div className=' grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
         {jobs?.map((item) => {
-            return <SingleJobCard key={item.id } {...item} favorites={favorites} />
+            return <SingleJobCard key={item.id } {...item} favoriteJobs={favorites} favoritePage={false} />
           })}
       </div>
       </main>

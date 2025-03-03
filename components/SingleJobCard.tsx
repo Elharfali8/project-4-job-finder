@@ -19,7 +19,8 @@ interface SingleJobTypes {
   job_type: string,
   category: string,
   publication_date: string,  
-  favorites: JobType[]
+  favoriteJobs: JobType[] | [],
+  favoritePage: boolean
 }
 
 import { Button } from "@/components/ui/button"
@@ -35,7 +36,7 @@ import Image from "next/image"
 import { Check, Star } from "lucide-react"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "@/store"
-import { addToFavorites } from "@/state/jobs/jobsSlice"
+import { addToFavorites, removeFromFavorites } from "@/state/jobs/jobsSlice"
 
 export function SingleJobCard({
   id,
@@ -45,7 +46,8 @@ company_logo,
 job_type,
 category,
   publication_date,
-favorites
+  favoriteJobs = [],
+  favoritePage
 }: SingleJobTypes) {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -58,7 +60,7 @@ favorites
     });
   };
 
-  const isFavorite = favorites?.find((item) => item.id === Number(id))
+  const isFavorite = favoriteJobs?.find((item) => item.id === Number(id))
 
 
   return (
@@ -85,10 +87,14 @@ favorites
         </p>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" className="bg-yellow-300 dark:text-gray-800 hover:bg-yellow-200" onClick={() => dispatch(addToFavorites({ id }))}>
-            {isFavorite ? 'Favorite' : 'Add to favorite '}
-          {isFavorite ? <Check /> : <Star />}
-        </Button>
+        {favoritePage ? (
+          <Button variant='destructive' className="text-white" onClick={() => dispatch(removeFromFavorites({id}))}>remove</Button>
+        ) : (
+          <Button variant="outline" className="bg-yellow-300 dark:text-gray-800 hover:bg-yellow-200" onClick={() => dispatch(addToFavorites({ id }))}>
+          {isFavorite ? 'Favorite' : 'Add to favorite '}
+        {isFavorite ? <Check /> : <Star />}
+      </Button>
+        )}
         <Button className="dark:text-white">Apply for job</Button>
       </CardFooter>
     </Card>
