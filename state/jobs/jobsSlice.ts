@@ -8,6 +8,7 @@ export interface InitialStateTypes {
     jobs: JobType[],
     favorites: JobType[],
     appliedJobs: JobType[],
+    filteredJobs: JobType[],
     jobCategories: string[],
     error: null | object | string
 }
@@ -26,6 +27,7 @@ export interface JobType {
 const initialState: InitialStateTypes = {
     isLoading: false,
     jobs: [] as JobType[],
+    filteredJobs: [] as JobType[],
     jobCategories: [
         "software-dev",
         "customer-support",
@@ -49,20 +51,34 @@ const initialState: InitialStateTypes = {
 
 export const fetchJobs = createAsyncThunk('jobs/fetchJobs', async () => {
     const url = "https://remotive.com/api/remote-jobs"
+
     try {
-        const response = await axios.get(url)
-        const data = response.data.jobs.slice(0, 20)
-        return data
+        const response = await axios.get(url);
+        const data = response.data.jobs.slice(0, 50) // Fetch more jobs initially
+        return data;
     } catch (error) {
         console.log(error);
-
+        throw error;
     }
-})
+});
 
 const jobsSlice = createSlice({
     name: 'jobs',
     initialState,
     reducers: {
+        filterJobs: (state, { payload }) => {
+            if (!state.jobs.length) return; // ✅ Prevent filtering before jobs load
+        
+            const { query, category } = payload;
+        
+            state.filteredJobs = state.jobs.filter((job) => {
+                return (
+                    (!query || job.title.toLowerCase().includes(query.toLowerCase())) &&
+                    (category !== 'all' ? job.category.toLowerCase() === category.toLowerCase() : true)
+                );
+            });
+        },
+        
         addToFavorites: (state, { payload }) => {
             const { id } = payload
             const job = state.jobs.find((item) => item.id === Number(id))
@@ -117,6 +133,7 @@ const jobsSlice = createSlice({
             .addCase(fetchJobs.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.jobs = action.payload;
+                state.filteredJobs = action.payload; // 👈 Set filteredJobs to all jobs initially
                 state.error = null;
             })
             .addCase(fetchJobs.rejected, (state, action) => {
@@ -126,5 +143,5 @@ const jobsSlice = createSlice({
     }
 })
 
-export const { addToFavorites, removeFromFavorites, AddToApplied, removeFromApplied } = jobsSlice.actions
+export const { addToFavorites, removeFromFavorites, AddToApplied, removeFromApplied, filterJobs } = jobsSlice.actions
 export default jobsSlice.reducer

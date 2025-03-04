@@ -7,12 +7,19 @@ type InputTypes = {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
- 
-export function MainInput({name, label}:InputTypes) {
+
+export function MainInput({ name, label, value, onChange }: InputTypes) {
   return (
-    <div className="grid w-full  items-center gap-1.5">
+    <div className="grid w-full items-center gap-1.5">
       <Label htmlFor={name}>{label}</Label>
-      <Input type={name} placeholder={label} />
+      <Input 
+        type="text" // Always use "text" for general input fields
+        id={name}
+        name={name}
+        placeholder={label}
+        value={value}
+        onChange={onChange} 
+      />
     </div>
   )
 }
