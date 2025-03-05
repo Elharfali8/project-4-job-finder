@@ -2,6 +2,7 @@
 
 import Filters from '@/components/Filters'
 import PageTitle from '@/components/PageTitle'
+import PaginationComponent from '@/components/PaginationComponent'
 import { SingleJobCard } from '@/components/SingleJobCard'
 import Sort from '@/components/Sort'
 import { fetchJobs, filterJobs } from '@/state/jobs/jobsSlice'
@@ -10,7 +11,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 const JobsPage = () => {
-  const {jobs, favorites, appliedJobs, filteredJobs} = useSelector((store: RootState) => store.jobs)
+  const {jobs, favorites, appliedJobs, filteredJobs, currentPage} = useSelector((store: RootState) => store.jobs)
   const dispatch = useDispatch<AppDispatch>()
   const [searchQuery, setSearchQuery] = useState('')
   const [category, setCategory] = useState('all')
@@ -35,7 +36,10 @@ const JobsPage = () => {
     dispatch(filterJobs({ query: searchQuery, category }));
 }, [searchQuery, category, jobs, dispatch]); // ✅ Added "jobs" dependency
 
-
+const jobsPerPage = 20;
+const indexOfLastJob = currentPage * jobsPerPage;
+const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+const displayedJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
 
   
 
@@ -50,9 +54,12 @@ const JobsPage = () => {
       />
       <Sort jobs={filteredJobs} />
       <div className=' grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
-        {filteredJobs?.map((item) => {
+        {displayedJobs?.map((item) => {
             return <SingleJobCard key={item.id } {...item} favoriteJobs={favorites} favoritePage={false} appliedJobs={appliedJobs} appliedPage={false} />
           })}
+      </div>
+      <div className='grid place-content-end my-4 lg:my-8'>
+      <PaginationComponent />
       </div>
       </main>
   )

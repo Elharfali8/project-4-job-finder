@@ -10,6 +10,8 @@ export interface InitialStateTypes {
     appliedJobs: JobType[],
     filteredJobs: JobType[],
     jobCategories: string[],
+    currentPage:number,
+    jobsPerPage: number,
     error: null | object | string
 }
  
@@ -46,6 +48,8 @@ const initialState: InitialStateTypes = {
     ],
     favorites: [] as JobType[],
     appliedJobs: [] as JobType[],
+    currentPage: 1,
+    jobsPerPage: 20,
     error: null,
 }
 
@@ -54,7 +58,7 @@ export const fetchJobs = createAsyncThunk('jobs/fetchJobs', async () => {
 
     try {
         const response = await axios.get(url);
-        const data = response.data.jobs.slice(0, 50) // Fetch more jobs initially
+        const data = response.data.jobs
         return data;
     } catch (error) {
         console.log(error);
@@ -123,6 +127,9 @@ const jobsSlice = createSlice({
                 toast.success('Job removed from applied')
             }
         },
+        setCurrentPage: (state, { payload }) => {
+            state.currentPage = payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -143,5 +150,5 @@ const jobsSlice = createSlice({
     }
 })
 
-export const { addToFavorites, removeFromFavorites, AddToApplied, removeFromApplied, filterJobs } = jobsSlice.actions
+export const { addToFavorites, removeFromFavorites, AddToApplied, removeFromApplied, filterJobs, setCurrentPage } = jobsSlice.actions
 export default jobsSlice.reducer
