@@ -1,3 +1,15 @@
+import {
+    getAppliedDataFromLocalStorage,
+    getDataFromLocalStorage,
+    getFavoritesDataFromLocalStorage,
+    addDataToLocalStorage,
+    addFavoritesDataToLocalStorage,
+    addAppliedDataToLocalStorage,
+    removeDataFromLocalStorage,
+    removeFavoritesDataFromLocalStorage,
+    removeAppliedDataFromLocalStorage
+} from "@/utils/localStorage";
+
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from 'axios'
 import { toast } from "react-toastify";
@@ -28,7 +40,7 @@ export interface JobType {
 
 const initialState: InitialStateTypes = {
     isLoading: false,
-    jobs: [] as JobType[],
+    jobs: getDataFromLocalStorage() || [] as JobType[],
     filteredJobs: [] as JobType[],
     jobCategories: [
         "software-dev",
@@ -46,8 +58,8 @@ const initialState: InitialStateTypes = {
         "writing",
         "all-others"
     ],
-    favorites: [] as JobType[],
-    appliedJobs: [] as JobType[],
+    favorites: getFavoritesDataFromLocalStorage() || [] as JobType[],
+    appliedJobs: getAppliedDataFromLocalStorage() || [] as JobType[],
     currentPage: 1,
     jobsPerPage: 20,
     error: null,
@@ -82,55 +94,72 @@ const jobsSlice = createSlice({
                 );
             });
         },
-        
+
         addToFavorites: (state, { payload }) => {
-            const { id } = payload
-            const job = state.jobs.find((item) => item.id === Number(id))
-            const jobExists = state.favorites.find((item) => item.id === Number(id))
+            const { id } = payload;
+            const job = state.jobs.find((item) => item.id === Number(id));
+            const jobExists = state.favorites.find((item) => item.id === Number(id));
 
             if (jobExists) {
-                // Remove the job from favorites if it already exists
-                state.favorites = state.favorites.filter((item) => item.id !== Number(id))
-                toast.success('Job removed from favorites')
+                state.favorites = state.favorites.filter((item) => item.id !== Number(id));
+                toast.success('Job removed from favorites');
             } else if (job) {
-                // Add the job to favorites if it does not exist
-                state.favorites = [...state.favorites, job]
-                toast.success('Job added to favorites')
+                state.favorites = [...state.favorites, job];
+                toast.success('Job added to favorites');
             }
+
+            // Update localStorage
+            addFavoritesDataToLocalStorage(state.favorites);
         },
+
         removeFromFavorites: (state, { payload }) => {
-            const { id } = payload
-            const jobExists = state.favorites.find((item) => item.id === Number(id))
-            if (jobExists) {
-                state.favorites = state.favorites.filter((item) => item.id !== Number(id))
-                toast.success('Job removed from favorites')
-            }
-        },
-        AddToApplied: (state, { payload }) => {
-            const { id } = payload
-            const job = state.jobs.find((item) => item.id === Number(id))
-            const jobExists = state.appliedJobs.find((item) => item.id === Number(id))
+            const { id } = payload;
+            const jobExists = state.favorites.find((item) => item.id === Number(id));
 
             if (jobExists) {
-                state.appliedJobs = state.appliedJobs.filter((item) => item.id !== Number(id))
-                toast.success('Job removed from applied')
-            } else if (job) {
-                state.appliedJobs = [...state.appliedJobs, job]
-                toast.success('Job added to applied')
+                state.favorites = state.favorites.filter((item) => item.id !== Number(id));
+                toast.success('Job removed from favorites');
             }
+
+            // Update localStorage
+            addFavoritesDataToLocalStorage(state.favorites);
         },
-        removeFromApplied: (state, { payload }) => {
-            const { id } = payload
-            const jobExists = state.appliedJobs.find((item) => item.id === Number(id))
+
+        AddToApplied: (state, { payload }) => {
+            const { id } = payload;
+            const job = state.jobs.find((item) => item.id === Number(id));
+            const jobExists = state.appliedJobs.find((item) => item.id === Number(id));
+
             if (jobExists) {
-                state.appliedJobs = state.appliedJobs.filter((item) => item.id !== Number(id))
-                toast.success('Job removed from applied')
+                state.appliedJobs = state.appliedJobs.filter((item) => item.id !== Number(id));
+                toast.success('Job removed from applied');
+            } else if (job) {
+                state.appliedJobs = [...state.appliedJobs, job];
+                toast.success('Job added to applied');
             }
+
+            // Update localStorage
+            addAppliedDataToLocalStorage(state.appliedJobs);
         },
+
+        removeFromApplied: (state, { payload }) => {
+            const { id } = payload;
+            const jobExists = state.appliedJobs.find((item) => item.id === Number(id));
+
+            if (jobExists) {
+                state.appliedJobs = state.appliedJobs.filter((item) => item.id !== Number(id));
+                toast.success('Job removed from applied');
+            }
+
+            // Update localStorage
+            addAppliedDataToLocalStorage(state.appliedJobs);
+        },
+
         setCurrentPage: (state, { payload }) => {
             state.currentPage = payload;
         },
     },
+
     extraReducers: (builder) => {
         builder
             .addCase(fetchJobs.pending, (state) => {
@@ -140,7 +169,7 @@ const jobsSlice = createSlice({
             .addCase(fetchJobs.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.jobs = action.payload;
-                state.filteredJobs = action.payload; // 👈 Set filteredJobs to all jobs initially
+                state.filteredJobs = action.payload;
                 state.error = null;
             })
             .addCase(fetchJobs.rejected, (state, action) => {
@@ -148,7 +177,8 @@ const jobsSlice = createSlice({
                 state.error = action.payload || 'Failed to fetch data';
             });
     }
-})
+});
+
 
 export const { addToFavorites, removeFromFavorites, AddToApplied, removeFromApplied, filterJobs, setCurrentPage } = jobsSlice.actions
 export default jobsSlice.reducer
