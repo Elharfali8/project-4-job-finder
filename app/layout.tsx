@@ -3,6 +3,7 @@ import "./globals.css";
 import Providers from "./Providers";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "Job Finder",
@@ -15,6 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en" >
       <body
         className={` antialiased`}
@@ -24,6 +26,7 @@ export default function RootLayout({
           <ToastContainer position="top-center" />
         </Providers>
       </body>
-    </html>
+      </html>
+      </ClerkProvider>
   );
 }

@@ -6,8 +6,9 @@ import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/store"
 import { setIsSidebarCollapsed } from "@/state/globalSlice"
 import { Button } from "./ui/button"
-import { ClipboardCheck, Heart, LayoutDashboard, Menu, Search, Settings } from "lucide-react"
+import { ClipboardCheck, Heart, LayoutDashboard, LogOut, Menu, Search, User } from "lucide-react"
 import SidebarLink from "./SidebarLink"
+import LogoutBtn from "./LogoutBtn";
 
 const Sidebar = () => {
   const { isSidebarCollapsed } = useSelector((store: RootState) => store.global)
@@ -58,16 +59,23 @@ const Sidebar = () => {
           isCollapsed={isSidebarCollapsed}
           />
           <SidebarLink
-          href="/settings"
-          icon={Settings}
-          label="settings"
+          href="/account"
+          icon={User}
+          label="account"
           isCollapsed={isSidebarCollapsed}
           />
         </div>
         </div>
-        {!isSidebarCollapsed && <div className="text-center">
+        <div className="text-center grid place-items-center">
+          <LogoutBtn
+            isCollapsed={isSidebarCollapsed}
+            icon={LogOut}
+            label="log out"
+          />
+        {/* {!isSidebarCollapsed && <div >
           <p>&copy; Job Finder {new Date().getFullYear()}</p>
-        </div>}
+        </div>} */}
+        </div>
       </div>
     </aside>
   )
